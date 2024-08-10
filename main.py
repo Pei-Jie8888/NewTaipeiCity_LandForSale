@@ -3,6 +3,26 @@ from bs4 import BeautifulSoup
 import re
 import emoji
 
+#lineNotify設定
+def lineNotifyMessage(token, msg, imgUrl):
+
+    # hearders 這兩項必帶
+    # token 為 LINE Notinfy 申請的權杖
+    headers = {
+        "Authorization": "Bearer " + token,
+        "Content-Type":  "application/x-www-form-urlencoded"
+    }
+
+    # message : 要顯示的文字
+    # imageThumbnail、imageFullsize : 要顯示的圖片
+    # stickerPackageId、stickerId : 貼圖
+    message = {'message': msg, 'imageThumbnail':imgUrl,'imageFullsize':imgUrl}
+    
+    #透過 POST 傳送
+    req = requests.post("https://notify-api.line.me/api/notify", headers = headers, data = message)
+    
+    return req.status_code
+
 # 要抓取頁面的Url
 url = "https://land.591.com.tw/list?type=2&kind=11&region=3&sort=posttime_desc&sale_price=$_2000$"
 
@@ -62,7 +82,7 @@ for item in item_infos:
     if len(pattern.findall(uptime)) > 0:
         pattern = re.compile('(.*)(?=分鐘)')
         minutes = re.search(pattern, uptime).group(1)
-        if int(minutes) <= 180:  # 180 minutes = 3 hours
+        if int(minutes) <= 720:  # 720 minutes = 24 hours
 
             msg = (f"\n小幫手來啦~ 😊\n土地更新資訊啦! 💥\n📢  {title}\n💵  {price}\n📝  {wordDetail}\n⏰  {uptime}\n\n🎉  看更詳細點↓網址 \n{detailUrl}")
 
@@ -70,27 +90,5 @@ for item in item_infos:
             print(msg)
             print('-------------')
 
-
-#lineNotify設定
-def lineNotifyMessage(token, msg, imgUrl):
-
-    # hearders 這兩項必帶
-    # token 為 LINE Notinfy 申請的權杖
-    headers = {
-        "Authorization": "Bearer " + token,
-        "Content-Type":  "application/x-www-form-urlencoded"
-    }
-
-    # message : 要顯示的文字
-    # imageThumbnail、imageFullsize : 要顯示的圖片
-    # stickerPackageId、stickerId : 貼圖
-    message = {'message': msg, 'imageThumbnail':imgUrl,'imageFullsize':imgUrl}
-    
-    #透過 POST 傳送
-    req = requests.post("https://notify-api.line.me/api/notify", headers = headers, data = message)
-    
-    return req.status_code
-
-
-# 傳送LINE訊息
-lineNotifyMessage("qx3hVGmJODYzL7oQsfxc04AitR8QBmnN8G0YeGsAy4Z", msg, img_url)  
+            # 傳送LINE訊息
+            lineNotifyMessage("qx3hVGmJODYzL7oQsfxc04AitR8QBmnN8G0YeGsAy4Z", msg, img_url)  
