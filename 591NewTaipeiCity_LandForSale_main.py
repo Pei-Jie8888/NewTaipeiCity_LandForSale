@@ -2,6 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import emoji
+import os
+token = os.getenv("LINE_NOTIFY_TOKEN")
 
 #lineNotify設定
 def lineNotifyMessage(token, msg, imgUrl):
@@ -95,4 +97,4 @@ for item in item_infos:
         print('-------------')
 
         # 傳送LINE訊息
-        lineNotifyMessage("qx3hVGmJODYzL7oQsfxc04AitR8QBmnN8G0YeGsAy4Z", msg, img_url)
+        lineNotifyMessage(token, msg, img_url)
